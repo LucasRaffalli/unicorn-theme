@@ -1,0 +1,42 @@
+<idea-plugin>
+    <id>com.lucasraffalli.unicorn-theme</id>
+    <name>Unicorn Theme</name>
+    <vendor>Lucas Raffalli</vendor>
+
+    <description><![CDATA[
+        Thème Unicorn, issu de l'app Kairos : rose bonbon et violet, fonds aubergine en sombre.
+        Deux variantes : Unicorn Dark et Unicorn Light.
+        Inclut des paillettes qui suivent le pointeur, désactivables dans
+        Settings > Appearance > Unicorn Sparkles ou via le menu Tools > Unicorn Sparkles.
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <themeProvider id="c1a3f5e2-7b4d-4e91-9a56-3d2f8b7c10aa" path="/themes/unicorn-dark.theme.json"/>
+        <themeProvider id="5e9d2b84-1c6f-4a37-8d05-7f3a9c2e4b11" path="/themes/unicorn-light.theme.json"/>
+        <bundledColorScheme path="/themes/UnicornDark" id="Unicorn Dark"/>
+        <bundledColorScheme path="/themes/UnicornLight" id="Unicorn Light"/>
+
+        <postStartupActivity implementation="com.lucasraffalli.unicorn.sparkles.SparklesProjectActivity"/>
+
+        <applicationConfigurable parentId="appearance"
+                                 instance="com.lucasraffalli.unicorn.sparkles.SparklesConfigurable"
+                                 id="com.lucasraffalli.unicorn.sparkles"
+                                 displayName="Unicorn Sparkles"/>
+    </extensions>
+
+    <applicationListeners>
+        <listener class="com.lucasraffalli.unicorn.sparkles.SparklesStartup"
+                  topic="com.intellij.ide.AppLifecycleListener"/>
+    </applicationListeners>
+
+    <actions>
+        <action id="UnicornSparkles.Toggle"
+                class="com.lucasraffalli.unicorn.sparkles.ToggleSparklesAction"
+                text="Unicorn Sparkles"
+                description="Show or hide the sparkles that follow the mouse pointer">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>
