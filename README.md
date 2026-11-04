@@ -90,3 +90,13 @@ src/main/java/com/lucasraffalli/unicorn/sparkles/
 
 - La variante contraste de Kairos n'est pas reprise.
 - Les paillettes sont dessinées sur le thread d'interface : sur une grosse machine chargée ou un très gros fichier, une baisse de fluidité est possible. L'interrupteur existe pour ça.
+
+## Mises à jour automatiques
+
+Une seule fois : `Settings → Plugins → ⚙ → Manage Plugin Repositories…` puis ajouter :
+
+```
+https://github.com/LucasRaffalli/unicorn-theme/releases/latest/download/updatePlugins.xml
+```
+
+Ensuite installer **Unicorn Theme** depuis l'onglet Marketplace/Installed : l'IDE proposera les nouvelles versions tout seul.

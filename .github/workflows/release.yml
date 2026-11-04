@@ -1,0 +1,41 @@
+name: Release
+
+# Publier une version : git tag v1.1.0 && git push origin v1.1.0
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build du plugin
+        run: ./gradlew buildPlugin
+      - name: Générer updatePlugins.xml (mises à jour automatiques dans l'IDE)
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          cat > build/distributions/updatePlugins.xml <<XML
+          <plugins>
+            <plugin id="com.lucasraffalli.unicorn-theme" version="$VERSION"
+                    url="https://github.com/${GITHUB_REPOSITORY}/releases/download/${GITHUB_REF_NAME}/unicorn-theme-$VERSION.zip">
+              <idea-version since-build="243"/>
+              <name>Unicorn Theme</name>
+            </plugin>
+          </plugins>
+          XML
+      - name: Créer la release GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            build/distributions/*.zip
+            build/distributions/updatePlugins.xml
+          generate_release_notes: true
