@@ -6,21 +6,55 @@
   "publisher": "lucasraffalli",
   "license": "MIT",
   "icon": "icon.png",
-  "engines": { "vscode": "^1.80.0" },
-  "categories": ["Themes", "Other"],
-  "keywords": ["theme", "unicorn", "pink", "purple", "sparkles"],
-  "repository": { "type": "git", "url": "https://github.com/LucasRaffalli/unicorn-theme.git" },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Themes",
+    "Other"
+  ],
+  "keywords": [
+    "theme",
+    "unicorn",
+    "pink",
+    "purple",
+    "sparkles"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LucasRaffalli/unicorn-theme.git"
+  },
   "main": "./extension.js",
-  "extensionKind": ["ui"],
-  "activationEvents": ["onStartupFinished"],
+  "extensionKind": [
+    "ui"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "contributes": {
     "themes": [
-      { "label": "Unicorn Dark", "uiTheme": "vs-dark", "path": "./themes/unicorn-dark-color-theme.json" },
-      { "label": "Unicorn Light", "uiTheme": "vs", "path": "./themes/unicorn-light-color-theme.json" }
+      {
+        "label": "Unicorn Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/unicorn-dark-color-theme.json"
+      },
+      {
+        "label": "Unicorn Light",
+        "uiTheme": "vs",
+        "path": "./themes/unicorn-light-color-theme.json"
+      }
     ],
     "commands": [
-      { "command": "unicorn.sparkles.enable", "title": "Activer les paillettes", "category": "Unicorn" },
-      { "command": "unicorn.sparkles.disable", "title": "Désactiver les paillettes", "category": "Unicorn" }
+      {
+        "command": "unicorn.sparkles.enable",
+        "title": "Activer les paillettes",
+        "category": "Unicorn"
+      },
+      {
+        "command": "unicorn.sparkles.disable",
+        "title": "Désactiver les paillettes",
+        "category": "Unicorn"
+      }
     ]
   }
 }
