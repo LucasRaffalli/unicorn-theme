@@ -10,6 +10,8 @@ if [ $# -ge 1 ]; then
 fi
 
 VERSION=$(sed -n -E 's/^version = "(.*)"/\1/p' build.gradle.kts)
+# Garde l'extension VS Code sur la même version
+(cd vscode && npm version "$VERSION" --no-git-tag-version --allow-same-version >/dev/null)
 TAG="v$VERSION"
 
 if git rev-parse "$TAG" >/dev/null 2>&1; then

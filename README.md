@@ -10,6 +10,10 @@ Thème pour les IDE JetBrains (WebStorm, PhpStorm, IntelliJ IDEA, etc.), aux cou
 
 Chaque variante comprend le thème d'interface (barres, onglets, boutons, popups, arbres) et un jeu de couleurs d'éditeur pour la syntaxe, la console et les inspections.
 
+## VS Code
+
+Une version pour VS Code (thèmes sombre et clair, paillettes en option) vit dans [`vscode/`](vscode/README.md). Chaque release GitHub contient `unicorn-theme-<version>.vsix` à côté du zip JetBrains : le télécharger puis `code --install-extension unicorn-theme-<version>.vsix`.
+
 ## Compatibilité
 
 IDE JetBrains en version 2024.3 (build 243) ou plus récente. Testé sur WebStorm 2026.2.

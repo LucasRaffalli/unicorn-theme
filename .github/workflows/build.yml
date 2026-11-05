@@ -20,3 +20,13 @@ jobs:
         with:
           name: unicorn-theme
           path: build/distributions/*.zip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build de l'extension VS Code
+        working-directory: vscode
+        run: npx --yes @vscode/vsce package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unicorn-theme-vscode
+          path: vscode/*.vsix

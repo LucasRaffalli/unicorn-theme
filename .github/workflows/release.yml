@@ -20,6 +20,15 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Build du plugin
         run: ./gradlew buildPlugin
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build de l'extension VS Code (version = celle du tag)
+        working-directory: vscode
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          npm version "$VERSION" --no-git-tag-version --allow-same-version
+          npx --yes @vscode/vsce package
       - name: Générer updatePlugins.xml (mises à jour automatiques dans l'IDE)
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
@@ -38,4 +47,5 @@ jobs:
           files: |
             build/distributions/*.zip
             build/distributions/updatePlugins.xml
+            vscode/*.vsix
           generate_release_notes: true

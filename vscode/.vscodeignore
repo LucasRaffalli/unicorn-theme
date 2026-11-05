@@ -1,0 +1,3 @@
+*.vsix
+sparkles/install.sh
+.gitignore
