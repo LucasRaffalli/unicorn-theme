@@ -34,6 +34,13 @@ VS Code n'offre aucune API pour dessiner par-dessus l'éditeur. L'extension ajou
 
 Le dossier `sparkles/install.sh` fait la même chose en ligne de commande sur macOS (`sudo ./install.sh install`), sans l'extension.
 
+## Terminal en couleur
+
+Le thème fournit la palette ANSI, mais c'est le shell qui décide quoi colorer. À la première ouverture, l'extension propose de colorer le prompt (nom en rose, dossier en bleu, branche git, flèche verte ou rouge) en ajoutant un bloc balisé à `~/.zshrc` (ou `~/.bashrc`). `ls` est coloré automatiquement dans les terminaux de VS Code, sans modifier aucun fichier.
+
+- **Unicorn: Colorer le prompt du terminal** : ajoute ou remet le bloc.
+- **Unicorn: Retirer les couleurs du prompt** : le supprime.
+
 ## Construire
 
 ```

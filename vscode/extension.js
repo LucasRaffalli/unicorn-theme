@@ -2,6 +2,8 @@
 const vscode = require('vscode');
 const path = require('path');
 const cp = require('child_process');
+const fs = require('fs');
+const os = require('os');
 const patcher = require('./patcher');
 
 const STATE_KEY = 'unicorn.sparkles.wanted';
@@ -73,12 +75,96 @@ async function checkAfterUpdate(context) {
   if (pick === 'Réactiver') { await toggle(context, 'install'); }
 }
 
+
+// ---- Couleurs du terminal (prompt et ls) ----------------------------------
+const PROMPT_KEY = 'unicorn.terminal.asked';
+const BEGIN = '# >>> unicorn prompt >>>';
+const END = '# <<< unicorn prompt <<<';
+
+const ZSH_SNIPPET = [
+  'setopt PROMPT_SUBST',
+  'autoload -Uz vcs_info',
+  'precmd() { vcs_info }',
+  "zstyle ':vcs_info:git:*' formats ' %F{magenta}(%b)%f'",
+  "PROMPT='%F{magenta}%n%f %F{blue}%~%f${vcs_info_msg_0_} %(?.%F{green}.%F{red})❯%f '"
+].join('\n');
+
+const BASH_SNIPPET = [
+  "__unicorn_branch() { local b; b=$(git branch --show-current 2>/dev/null); [ -n \"$b\" ] && printf ' (%s)' \"$b\"; }",
+  "PS1='\\[\\e[35m\\]\\u\\[\\e[0m\\] \\[\\e[34m\\]\\w\\[\\e[35m\\]$(__unicorn_branch)\\[\\e[0m\\] \\[\\e[32m\\]❯\\[\\e[0m\\] '"
+].join('\n');
+
+function shellRc() {
+  const sh = path.basename(process.env.SHELL || '');
+  if (sh === 'zsh') { return { file: path.join(os.homedir(), '.zshrc'), snippet: ZSH_SNIPPET }; }
+  if (sh === 'bash') {
+    const file = path.join(os.homedir(), process.platform === 'darwin' ? '.bash_profile' : '.bashrc');
+    return { file, snippet: BASH_SNIPPET };
+  }
+  return null;
+}
+
+function stripBlock(text) {
+  const re = new RegExp('\\n?' + BEGIN.replace(/[>]/g, '\\$&') + '[\\s\\S]*?' + END.replace(/[<]/g, '\\$&') + '\\n?', 'g');
+  return text.replace(re, '\n');
+}
+
+function enablePrompt() {
+  const rc = shellRc();
+  if (!rc) { throw new Error('Shell non pris en charge (zsh et bash seulement).'); }
+  const current = fs.existsSync(rc.file) ? fs.readFileSync(rc.file, 'utf8') : '';
+  const clean = stripBlock(current).replace(/\s+$/, '');
+  fs.writeFileSync(rc.file, (clean ? clean + '\n\n' : '') + BEGIN + '\n' + rc.snippet + '\n' + END + '\n');
+  return rc.file;
+}
+
+function disablePrompt() {
+  const rc = shellRc();
+  if (!rc || !fs.existsSync(rc.file)) { return; }
+  fs.writeFileSync(rc.file, stripBlock(fs.readFileSync(rc.file, 'utf8')).replace(/\s+$/, '') + '\n');
+}
+
+// ls en couleur dans les terminaux de VS Code, sans toucher aux fichiers de l'utilisateur.
+function applyTerminalEnv(context) {
+  const env = context.environmentVariableCollection;
+  env.description = 'Unicorn : ls en couleur';
+  if (process.platform !== 'win32') {
+    env.replace('CLICOLOR', '1');
+    env.replace('LSCOLORS', 'exfxcxdxbxegedabagacad');
+  }
+}
+
+async function askPrompt(context) {
+  if (process.platform === 'win32' || context.globalState.get(PROMPT_KEY) || !shellRc()) { return; }
+  await context.globalState.update(PROMPT_KEY, true);
+  const pick = await vscode.window.showInformationMessage(
+    'Unicorn : colorer le prompt du terminal (nom en rose, dossier en bleu, branche git, flèche verte ou rouge) ? Ajoute un bloc à ton fichier de configuration du shell.',
+    'Oui', 'Non merci');
+  if (pick === 'Oui') { runEnablePrompt(); }
+}
+
+function runEnablePrompt() {
+  try {
+    const file = enablePrompt();
+    vscode.window.showInformationMessage('Prompt coloré ajouté à ' + file + '. Ouvre un nouveau terminal pour le voir.');
+  } catch (e) {
+    vscode.window.showErrorMessage('Unicorn : ' + e.message);
+  }
+}
+
 function activate(context) {
   context.subscriptions.push(
     vscode.commands.registerCommand('unicorn.sparkles.enable', () => toggle(context, 'install')),
-    vscode.commands.registerCommand('unicorn.sparkles.disable', () => toggle(context, 'uninstall'))
+    vscode.commands.registerCommand('unicorn.sparkles.disable', () => toggle(context, 'uninstall')),
+    vscode.commands.registerCommand('unicorn.terminal.enable', runEnablePrompt),
+    vscode.commands.registerCommand('unicorn.terminal.disable', () => {
+      disablePrompt();
+      vscode.window.showInformationMessage('Prompt coloré retiré. Ouvre un nouveau terminal.');
+    })
   );
+  applyTerminalEnv(context);
   checkAfterUpdate(context);
+  askPrompt(context);
 }
 
 function deactivate() {}
