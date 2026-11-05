@@ -22,6 +22,8 @@ Le thème s'utilise seul. Pour la traînée :
 
 Pour les retirer : **Unicorn: Désactiver les paillettes**, puis relancer.
 
+> **À faire avant de désinstaller l'extension.** Désinstaller l'extension ne retire pas les paillettes de VS Code : le patch reste en place. Lance d'abord **Unicorn: Désactiver les paillettes**, relance VS Code, puis désinstalle. Si c'est déjà fait dans le mauvais ordre, depuis le dépôt : `cd vscode/sparkles && sudo ./install.sh uninstall` (macOS), puis `Cmd+Q`.
+
 ### Ce qu'il faut savoir
 
 VS Code n'offre aucune API pour dessiner par-dessus l'éditeur. L'extension ajoute donc un script au fichier `workbench.html` de VS Code (le même principe que « Custom CSS and JS Loader ») et met à jour l'empreinte correspondante dans `product.json`. Conséquences :
